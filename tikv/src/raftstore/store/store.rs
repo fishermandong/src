@@ -1837,7 +1837,7 @@ impl<T: Transport, C: PdClient> Store<T, C> {
                     start_key: Some(keys::enc_start_key(peer.region())),
                     end_key: Some(keys::enc_end_key(peer.region())),
                 };
-                if let Err(e) = self.compact_worker.schedule(task) {
+                if let Err(e) = self.compact_worker.schedule(task) {//DHQ: compact:tick触发
                     error!("{} failed to schedule compact task: {}", self.tag, e);
                 }
             }
@@ -1868,7 +1868,7 @@ impl<T: Transport, C: PdClient> Store<T, C> {
             right_derive: self.cfg.right_derive_when_split,
             callback: cb,
         };
-        if let Err(Stopped(t)) = self.pd_worker.schedule(task) {
+        if let Err(Stopped(t)) = self.pd_worker.schedule(task) {//DHQ: 这个实际上是请求PD，要split
             error!("{} failed to notify pd to split: Stopped", peer.tag);
             match t {
                 PdTask::AskSplit { callback, .. } => {
